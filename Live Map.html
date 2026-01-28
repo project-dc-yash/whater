@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Details & PDF Report</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #0f172a; color: white; display: flex; min-height: 100vh; }
+
+        /* Sidebar Navigation */
+        .sidebar { width: 260px; background: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255,255,255,0.1); padding: 30px 20px; position: fixed; height: 100vh; }
+        .sidebar h2 { color: #38bdf8; font-size: 22px; margin-bottom: 40px; }
+        .nav-item { padding: 15px; border-radius: 12px; cursor: pointer; color: #94a3b8; transition: 0.3s; margin-bottom: 10px; }
+        .nav-item.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
+
+        /* Main Content */
+        .main-container { flex: 1; margin-left: 260px; padding: 40px; }
+        
+        /* Table Styles */
+        .sensor-table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.02); border-radius: 15px; overflow: hidden; margin-top: 20px; }
+        .sensor-table th, .sensor-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sensor-table th { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+
+        /* Action Button */
+        .btn-view { padding: 8px 16px; border-radius: 8px; border: none; background: #38bdf8; color: #0f172a; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-view:hover { background: #7dd3fc; transform: scale(1.05); }
+
+        /* MODAL (PDF FORM) STYLES */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; 
+        }
+        .pdf-form { 
+            background: white; color: #333; width: 500px; padding: 40px; border-radius: 5px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); position: relative;
+        }
+        .pdf-header { border-bottom: 2px solid #38bdf8; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .pdf-row { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .pdf-row span:first-child { font-weight: bold; color: #555; }
+        .pdf-footer { margin-top: 30px; font-size: 12px; text-align: center; color: #888; border-top: 1px solid #eee; padding-top: 10px; }
+        
+        .close-pdf { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #ff4d4d; font-weight: bold; }
+        .print-btn { width: 100%; margin-top: 20px; padding: 10px; background: #0f172a; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>💧 Water AI IoT</h2>
+        <div class="nav-item" onclick="window.history.back()">Dashboard</div>
+        <div class="nav-item active">Sensor Nodes</div>
+        <div class="nav-item">Forecast Reports</div>
+        <div class="nav-item" style="margin-top: 50px; color: #fb7185;" onclick="window.location.href='index.html'">Logout</div>
+    </div>
+
+    <div class="main-container">
+        <h1>Sensor Network Control</h1>
+        <p style="color: #94a3b8;">Click "View Report" to see the technical PDF summary.</p>
+
+        <table class="sensor-table">
+            <thead>
+                <tr>
+                    <th>Node ID</th>
+                    <th>Location</th>
+                    <th>Parameter</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>NODE-001</td>
+                    <td>Main Reservoir</td>
+                    <td>pH Level</td>
+                    <td><button class="btn-view" onclick="openReport('NODE-001', 'Main Reservoir', '7.4 pH', 'Normal')">View Report</button></td>
+                </tr>
+                <tr>
+                    <td>NODE-002</td>
+                    <td>Industrial Area</td>
+                    <td>Turbidity</td>
+                    <td><button class="btn-view" onclick="openReport('NODE-002', 'Industrial Area', '0.8 NTU', 'Safe')">View Report</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="pdf-form">
+            <span class="close-pdf" onclick="closeReport()">&times;</span>
+            <div class="pdf-header">
+                <h2 style="color: #0f172a;">URBAN WATER ANALYTICS</h2>
+                <p style="font-size: 12px; color: #38bdf8;">Official IoT Sensor Technical Report</p>
+            </div>
+            
+            <div class="pdf-row"><span>Report ID:</span> <span id="r-id">#12345</span></div>
+            <div class="pdf-row"><span>Node ID:</span> <span id="r-node"></span></div>
+            <div class="pdf-row"><span>Location:</span> <span id="r-loc"></span></div>
+            <div class="pdf-row"><span>Current Value:</span> <span id="r-val" style="color:#1d4ed8; font-weight:bold;"></span></div>
+            <div class="pdf-row"><span>Safety Status:</span> <span id="r-status" style="color: green;">Verified</span></div>
+            <div class="pdf-row"><span>Timestamp:</span> <span id="r-time"></span></div>
+
+            <div class="pdf-footer">
+                This document is automatically generated by AI-Powered IoT Forecasting System.
+            </div>
+            <button class="print-btn" onclick="window.print()">Print to PDF</button>
+        </div>
+    </div>
+
+    <script>
+        function openReport(id, loc, val, status) {
+            document.getElementById('r-node').innerText = id;
+            document.getElementById('r-loc').innerText = loc;
+            document.getElementById('r-val').innerText = val;
+            document.getElementById('r-time').innerText = new Date().toLocaleString();
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeReport() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

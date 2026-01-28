@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Water AI-IoT System</title>
+    <style>
+        /* Modern Water-Themed Design */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+
+        body {
+            background: #0f172a;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(0, 210, 255, 0.2);
+            border-radius: 50%;
+            filter: blur(20px);
+            z-index: 0;
+            animation: move 10s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translateY(0) scale(1); }
+            to { transform: translateY(-50px) scale(1.2); }
+        }
+
+        .login-box {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            padding: 50px 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .logo-circle {
+            width: 80px; height: 80px;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+        }
+
+        h1 { color: #fff; font-size: 22px; margin-bottom: 5px; letter-spacing: 1px; }
+        p.subtitle { color: #94a3b8; font-size: 12px; margin-bottom: 30px; text-transform: uppercase; }
+
+        .input-container { text-align: left; margin-bottom: 20px; }
+        label { color: #cbd5e1; font-size: 14px; margin-left: 5px; }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: #00d2ff; background: rgba(255, 255, 255, 0.15); }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3); }
+
+        #error-msg { margin-top: 15px; font-size: 14px; min-height: 20px; }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+    </style>
+</head>
+<body>
+
+    <div class="bubble" style="width: 200px; height: 200px; top: 10%; left: 10%;"></div>
+    <div class="bubble" style="width: 300px; height: 300px; bottom: 5%; right: 5%; animation-delay: 2s;"></div>
+
+    <div class="login-box">
+        <div class="logo-circle">💧</div>
+        <h1>Urban Water AI</h1>
+        <p class="subtitle">IoT Contamination Forecasting</p>
+
+        <div class="input-container">
+            <label>Organization Email</label>
+            <input type="text" id="email" placeholder="Enter Email">
+        </div>
+
+        <div class="input-container">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter Password">
+        </div>
+
+        <button class="btn" id="loginBtn" onclick="checkAccess()">Secure Sign In</button>
+
+        <div id="error-msg"></div>
+    </div>
+
+    <script>
+        function checkAccess() {
+            const emailInput = document.getElementById('email').value;
+            const passInput = document.getElementById('password').value;
+            const status = document.getElementById('error-msg');
+            const btn = document.getElementById('loginBtn');
+
+            // Hardcoded Credentials
+            const validEmail = "Iotprojects@123";
+            const validPass = "Pass@123";
+
+            if (emailInput === validEmail && passInput === validPass) {
+                // Visual Feedback
+                btn.innerHTML = "Authenticating...";
+                btn.style.opacity = "0.7";
+                status.className = "success";
+                status.innerHTML = "Access Granted. Syncing with IoT Sensors...";
+
+                // Redirect after a short delay
+                setTimeout(() => {
+                    window.location.href = "dashboard.html";
+                }, 1500);
+                
+            } else {
+                status.className = "error";
+                status.innerHTML = "Invalid credentials. Please try again.";
+            }
+        }
+    </script>
+</body>
+</html>

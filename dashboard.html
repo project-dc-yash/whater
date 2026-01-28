@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Water Tool</title>
+    <style>
+        :root {
+            --primary: #38bdf8;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-gray: #94a3b8;
+            --ai-glow: #a855f7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-dark); color: white; display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar { width: 260px; background: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; position: fixed; height: 100vh; }
+        .sidebar h2 { color: var(--primary); margin-bottom: 40px; }
+        .nav-item { padding: 15px; border-radius: 12px; cursor: pointer; color: var(--text-gray); transition: 0.3s; margin-bottom: 10px; display: block; text-decoration: none; }
+        .nav-item.active { background: var(--primary); color: #0f172a; font-weight: bold; }
+
+        .main-content { flex: 1; margin-left: 260px; padding: 40px; }
+
+        /* --- AI TOOL SECTION --- */
+        .ai-tool-container {
+            background: linear-gradient(145deg, rgba(168, 85, 247, 0.1), rgba(15, 23, 42, 1));
+            border: 1px solid var(--ai-glow);
+            padding: 30px;
+            border-radius: 25px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .ai-badge { background: var(--ai-glow); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        .ai-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; align-items: center; }
+
+        /* Scanner Animation */
+        .scanner-box {
+            height: 150px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            position: relative;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            color: var(--ai-glow);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--ai-glow);
+            box-shadow: 0 0 15px var(--ai-glow);
+            animation: scan 3s infinite linear;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+
+        .scan-btn {
+            background: var(--ai-glow);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .scan-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--ai-glow); }
+
+        /* Results Display */
+        #ai-result { color: #4ade80; font-size: 18px; font-weight: bold; margin-top: 15px; display: none; }
+        
+        /* Stats Table */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>💧 Water AI IoT</h2>
+        <a href="dashboard.html" class="nav-item active">Dashboard</a>
+        <a href="Live Map.html" class="nav-item">Sensor Nodes</a>
+        <a href="reports.html" class="nav-item">Forecast Reports</a>
+        <div class="nav-item" style="margin-top: 50px; color: #fb7185;" onclick="location.href='index.html'">Logout</div>
+    </div>
+
+    <div class="main-content">
+        <h1>System Dashboard</h1>
+        <p style="color: var(--text-gray); margin-bottom: 30px;">Urban Water Management AI Tool</p>
+
+        <div class="ai-tool-container">
+            <div class="ai-header">
+                <span class="ai-badge">AI ANALYZER V2.0</span>
+                <h3>Instant Contamination Check</h3>
+            </div>
+            
+            <div class="ai-grid">
+                <div class="scanner-box">
+                    <div class="scan-line" id="line" style="display:none;"></div>
+                    <span id="scan-text">Ready to Scan</span>
+                </div>
+
+                <div>
+                    <p style="color: var(--text-gray); margin-bottom: 15px;">
+                        The AI tool will cross-reference current sensor pH, Turbidity, and Chemical levels with historical contamination patterns.
+                    </p>
+                    <button class="scan-btn" onclick="runAIScan()">Run AI Diagnosis</button>
+                    <div id="ai-result">✓ ANALYSIS COMPLETE: Water Purity 98.4% (SAFE)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="card"><h4>Active Nodes</h4><p style="font-size: 24px; color: var(--primary);">142</p></div>
+            <div class="card"><h4>Avg pH</h4><p style="font-size: 24px; color: var(--primary);">7.2</p></div>
+            <div class="card"><h4>Alerts</h4><p style="font-size: 24px; color: #f87171;">0</p></div>
+        </div>
+    </div>
+
+    <script>
+        function runAIScan() {
+            const btn = document.querySelector('.scan-btn');
+            const result = document.getElementById('ai-result');
+            const line = document.getElementById('line');
+            const text = document.getElementById('scan-text');
+
+            btn.innerText = "Analyzing...";
+            line.style.display = "block";
+            text.innerText = "Scanning IoT Data...";
+            result.style.display = "none";
+
+            setTimeout(() => {
+                line.style.display = "none";
+                text.innerText = "Scan Complete";
+                result.style.display = "block";
+                btn.innerText = "Run AI Diagnosis";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

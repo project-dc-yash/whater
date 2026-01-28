@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Forecast Reports - Water IoT</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #38bdf8;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-gray: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-dark); color: white; display: flex; min-height: 100vh; }
+
+        /* Sidebar Styling */
+        .sidebar { width: 260px; background: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; position: fixed; height: 100vh; }
+        .sidebar h2 { color: var(--primary); font-size: 22px; margin-bottom: 40px; }
+        .nav-item { padding: 15px; border-radius: 12px; cursor: pointer; color: var(--text-gray); transition: 0.3s; margin-bottom: 10px; text-decoration: none; display: block; }
+        .nav-item:hover { background: rgba(56, 189, 248, 0.1); color: var(--primary); }
+        .nav-item.active { background: var(--primary); color: #0f172a; font-weight: bold; }
+
+        /* Content Styling */
+        .main-content { flex: 1; margin-left: 260px; padding: 40px; }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        
+        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+        .chart-card { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .prediction-card { background: linear-gradient(145deg, rgba(56, 189, 248, 0.1), rgba(15, 23, 42, 1)); padding: 25px; border-radius: 20px; border: 1px solid var(--primary); }
+
+        .ai-status { display: inline-block; padding: 4px 12px; border-radius: 20px; background: rgba(56, 189, 248, 0.2); color: var(--primary); font-size: 12px; margin-bottom: 10px; }
+        
+        .download-btn { background: var(--primary); color: #0f172a; padding: 12px 24px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .download-btn:hover { background: #7dd3fc; transform: translateY(-2px); }
+
+        .risk-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .low { color: #4ade80; }
+        .mid { color: #fbbf24; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>💧 Water AI IoT</h2>
+        <a href="dashboard.html" class="nav-item">Dashboard</a>
+        <a href="Live Map.html" class="nav-item">Sensor Nodes</a>
+        <a href="reports.html" class="nav-item active">Forecast Reports</a>
+        <div class="nav-item" style="margin-top: 50px; color: #fb7185;" onclick="location.href='index.html'">Logout</div>
+    </div>
+
+    <div class="main-content">
+        <div class="report-header">
+            <div>
+                <h1>AI Predictive Analytics</h1>
+                <p style="color: var(--text-gray);">Contamination Forecasting for the next 7 days</p>
+            </div>
+            <button class="download-btn" onclick="alert('Downloading CSV Report...')">Export Data</button>
+        </div>
+
+        <div class="grid">
+            <div class="chart-card">
+                <h3>Contamination Trend (AI Forecast)</h3>
+                <canvas id="forecastChart" style="width:100%; max-height:350px; margin-top:20px;"></canvas>
+            </div>
+
+            <div class="prediction-card">
+                <span class="ai-status">AI ACTIVE</span>
+                <h3>Forecast Insights</h3>
+                <p style="font-size: 14px; margin: 15px 0; color: var(--text-gray); line-height: 1.6;">
+                    Our Neural Network has analyzed data from 142 nodes. Current trends suggest water purity will remain stable with a slight increase in mineral content in Zone C.
+                </p>
+                <hr style="opacity: 0.1; margin: 20px 0;">
+                <div class="risk-item">
+                    <span>Pathogen Risk</span>
+                    <span class="low">0.02% (Low)</span>
+                </div>
+                <div class="risk-item">
+                    <span>Chemical Runoff</span>
+                    <span class="low">0.15% (Low)</span>
+                </div>
+                <div class="risk-item">
+                    <span>Turbidity Spike</span>
+                    <span class="mid">1.4% (Moderate)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart Configuration
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Predicted Contamination Index',
+                    data: [12, 19, 15, 8, 10, 22, 14],
+                    borderColor: '#38bdf8',
+                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
